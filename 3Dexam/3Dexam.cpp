@@ -85,6 +85,11 @@ void render(GLFWwindow* window, Shader ourShader, unsigned VAO)
 
 
         CameraView(shaderPrograms, model, projection);
+
+        //slowly move testing box to the right
+        testingBox.globalPosition.x += deltaTime * 1.1f;
+        //slowly rotate testing box
+        testingBox.globalRotation.y += deltaTime * 100.1f;
         
         // input
         // -----

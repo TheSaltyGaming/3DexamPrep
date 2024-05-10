@@ -24,9 +24,12 @@ public:
     
     MeshType mType;
 
-    glm::mat4 model = glm::mat4(1.0f);
+    // glm::mat4 model = glm::mat4(1.0f);
     unsigned int VBO, VAO, EBO;
 
     std::vector<Vertex> vertices;
     std::vector<unsigned int> indices;
+
+    glm::vec3 globalPosition = glm::vec3(0.0f, 0.0f, 0.0f);
+    glm::vec3 globalRotation = glm::vec3(0.0f, 0.0f, 0.0f);
 };
