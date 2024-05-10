@@ -131,11 +131,13 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="3Dexam.cpp" />
+    <ClCompile Include="Camera.cpp" />
     <ClCompile Include="glad.c" />
     <ClCompile Include="Shader.cpp" />
     <ClCompile Include="ShaderFileLoader.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Camera.h" />
     <ClInclude Include="includes\assimp\Bitmap.h" />
     <ClInclude Include="includes\GLFW\glfw3.h" />
     <ClInclude Include="includes\GLFW\glfw3native.h" />
@@ -143,6 +145,16 @@
     <ClInclude Include="includes\KHR\khrplatform.h" />
     <ClInclude Include="Shader.h" />
     <ClInclude Include="ShaderFileLoader.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Triangle.frag" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="FragmentShader.frag" />
+    <Content Include="FragShaderOld.frag" />
+    <Content Include="Triangle.vert" />
+    <Content Include="VertShader.vert" />
+    <Content Include="VertShaderOld.vert" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
