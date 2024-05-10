@@ -1,23 +1,113 @@
 #include "Shader.h"
 #include "ShaderFileLoader.h"
 #include <iostream>
+#include <glm/fwd.hpp>
+#include <glm/glm.hpp>
+#include <glm/gtc/matrix_transform.hpp>
+#include <glm/gtc/type_ptr.hpp>
+
+#include "Camera.h"
 #include "glm/mat4x3.hpp"
 
 void framebuffer_size_callback(GLFWwindow* window, int width, int height);
 void processInput(GLFWwindow* window);
 
+void CameraView(std::vector<unsigned> shaderPrograms, glm::mat4 trans, glm::mat4 projection);
+void mouse_callback(GLFWwindow* window, double xpos, double ypos);
+void DrawObjects(unsigned VAO, Shader ShaderProgram);
+
 // settings
-const unsigned int SCR_WIDTH = 800;
-const unsigned int SCR_HEIGHT = 600;
 
-// std::string vfs = ShaderLoader::LoadShaderFromFile("Triangle.vert");
-// std::string fs = ShaderLoader::LoadShaderFromFile("Triangle.frag");
+const unsigned int SCR_WIDTH = 1280;
+const unsigned int SCR_HEIGHT = 720;
 
+///Delta time variables
+///--------------------
+float deltaTime = 0.0f;	// Time between current frame and last frame
+float lastFrame = 0.0f; // Time of last frame
+
+///Mouse Input Variables
+///---------------------
+bool firstMouse = true;
+float lastX = SCR_WIDTH / 2.0f, lastY = SCR_HEIGHT / 2.0f;
+
+std::string vfs = ShaderLoader::LoadShaderFromFile("Triangle.vert");
+std::string fs = ShaderLoader::LoadShaderFromFile("Triangle.frag");
+
+Camera MainCamera;
+
+std::vector<unsigned> shaderPrograms;
+
+void DrawObjects(unsigned VAO, Shader ShaderProgram)
+{
+    ShaderProgram.use();
+    glBindVertexArray(VAO);
+    glDrawArrays(GL_TRIANGLES, 0, 3);
+}
+
+
+void render(GLFWwindow* window, Shader ourShader, unsigned VAO)
+{
+    glm::mat4 view = glm::mat4(1.0f);
+    view = glm::translate(view, glm::vec3(0.0f, 0.0f, -3.0f)); 
+
+    glm::mat4 projection;
+    projection = glm::perspective(glm::radians(45.0f), 800.0f / 600.0f, 0.1f, 100.0f);
+
+    glm::mat4 model = glm::mat4(1.0f);
+    model = glm::rotate(model, glm::radians(-55.0f), glm::vec3(1.0f, 0.0f, 0.0f)); 
+    
+    
+    // render loop
+    // -----------
+    while (!glfwWindowShouldClose(window))
+    {
+
+        float currentFrame = glfwGetTime();
+        deltaTime = currentFrame - lastFrame;
+        lastFrame = currentFrame;
+
+        int modelLoc = glGetUniformLocation(ourShader.ID, "model");
+        glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
+        
+        int viewLoc = glGetUniformLocation(ourShader.ID, "view");
+        glUniformMatrix4fv(viewLoc, 1, GL_FALSE, glm::value_ptr(view));
+        
+        int projectionLoc = glGetUniformLocation(ourShader.ID, "projection");
+        glUniformMatrix4fv(projectionLoc, 1, GL_FALSE, glm::value_ptr(projection));
+
+
+        CameraView(shaderPrograms, model, projection);
+        
+        // input
+        // -----
+        processInput(window);
+        
+        // render
+        // ------
+        glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+        //Temp rotate code
+        
+        //model = glm::rotate(model, deltaTime * glm::radians(50.0f), glm::vec3(0.5f, 1.0f, 0.0f));
+        
+        // render the triangle
+        DrawObjects(VAO, ourShader);
+
+        // glfw: swap buffers and poll IO events (keys pressed/released, mouse moved etc.)
+        // -------------------------------------------------------------------------------
+        glfwSwapBuffers(window);
+        glfwPollEvents();
+    }
+}
 
 int main()
 {
-    std::cout << "Vfs " << vfs.c_str() << std::endl;
-    std::cout << "fs " << fs.c_str() << std::endl;
+    //Print out shader
+    // std::cout << "Vfs " << vfs.c_str() << std::endl;
+    // std::cout << "fs " << fs.c_str() << std::endl;'
+    
     // glfw: initialize and configure
     // ------------------------------
     glfwInit();
@@ -38,6 +128,9 @@ int main()
     glfwMakeContextCurrent(window);
     glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
 
+    glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+    glfwSetCursorPosCallback(window, mouse_callback); // Set the mouse callback function
+
     // glad: load all OpenGL function pointers
     // ---------------------------------------
     if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
@@ -52,6 +145,8 @@ int main()
     //Shader ourShader("Triangle.vert", "Triangle.frag"); // you can name your shader files however you like
     Shader ourShader("VertShaderOld.vert", "FragShaderOld.frag"); // you can name your shader files however you like
 
+    shaderPrograms.push_back(ourShader.ID);
+    
     // set up vertex data (and buffer(s)) and configure vertex attributes
     // ------------------------------------------------------------------
     float vertices[] = {
@@ -81,30 +176,12 @@ int main()
     // VAOs requires a call to glBindVertexArray anyways so we generally don't unbind VAOs (nor VBOs) when it's not directly necessary.
     // glBindVertexArray(0);
 
+    glEnable(GL_DEPTH_TEST);
+    
 
-    // render loop
-    // -----------
-    while (!glfwWindowShouldClose(window))
-    {
-        // input
-        // -----
-        processInput(window);
-
-        // render
-        // ------
-        glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
-        glClear(GL_COLOR_BUFFER_BIT);
-
-        // render the triangle
-        ourShader.use();
-        glBindVertexArray(VAO);
-        glDrawArrays(GL_TRIANGLES, 0, 3);
-
-        // glfw: swap buffers and poll IO events (keys pressed/released, mouse moved etc.)
-        // -------------------------------------------------------------------------------
-        glfwSwapBuffers(window);
-        glfwPollEvents();
-    }
+    
+    //RENDER FUNCTION HERE!!!!!!!
+    render(window, ourShader, VAO);
 
     // optional: de-allocate all resources once they've outlived their purpose:
     // ------------------------------------------------------------------------
@@ -121,8 +198,64 @@ int main()
 // ---------------------------------------------------------------------------------------------------------
 void processInput(GLFWwindow* window)
 {
+    glm::vec3 cameraFrontXZ = glm::normalize(glm::vec3(MainCamera.cameraFront.x, 0.0f, MainCamera.cameraFront.z));
+
     if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
         glfwSetWindowShouldClose(window, true);
+
+    float cameraSpeed = 2.5f * deltaTime;
+
+    if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
+        MainCamera.cameraPos += cameraSpeed * cameraFrontXZ;
+    if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
+        MainCamera.cameraPos -= cameraSpeed * cameraFrontXZ;
+    if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
+        MainCamera.cameraPos -= glm::normalize(glm::cross(MainCamera.cameraFront, MainCamera.cameraUp)) * cameraSpeed;
+    if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
+        MainCamera.cameraPos += glm::normalize(glm::cross(MainCamera.cameraFront, MainCamera.cameraUp)) * cameraSpeed;
+    if (glfwGetKey(window, GLFW_KEY_E) == GLFW_PRESS)
+        MainCamera.cameraPos += cameraSpeed * MainCamera.cameraUp; // Move camera up
+    if (glfwGetKey(window, GLFW_KEY_Q) == GLFW_PRESS)
+        MainCamera.cameraPos -= cameraSpeed * MainCamera.cameraUp; // Move camera down
+    if (glfwGetKey(window, GLFW_KEY_SPACE) == GLFW_PRESS)
+    {
+        ;
+        MainCamera.cameraPos.y += 0.01;
+    }
+}
+
+void mouse_callback(GLFWwindow* window, double xpos, double ypos)
+{
+    // Prevents sudden jump in camera movement
+    if (firstMouse)
+    {
+        lastX = xpos;
+        lastY = ypos;
+        firstMouse = false;
+    }
+
+    float xoffset = xpos - lastX;
+    float yoffset = lastY - ypos; 
+    lastX = xpos;
+    lastY = ypos;
+ 
+    float sensitivity = 0.1f;
+    xoffset *= sensitivity;
+    yoffset *= sensitivity;
+ 
+    MainCamera.yaw   += xoffset;
+    MainCamera.pitch += yoffset;
+ 
+    if(MainCamera.pitch > 89.0f)
+        MainCamera.pitch = 89.0f;
+    if(MainCamera.pitch < -89.0f)
+        MainCamera.pitch = -89.0f;
+ 
+    glm::vec3 direction;
+    direction.x = cos(glm::radians(MainCamera.yaw)) * cos(glm::radians(MainCamera.pitch));
+    direction.y = sin(glm::radians(MainCamera.pitch));
+    direction.z = sin(glm::radians(MainCamera.yaw)) * cos(glm::radians(MainCamera.pitch));
+    MainCamera.cameraFront = glm::normalize(direction);
 }
 
 // glfw: whenever the window size changed (by OS or user resize) this callback function executes
@@ -132,4 +265,31 @@ void framebuffer_size_callback(GLFWwindow* window, int width, int height)
     // make sure the viewport matches the new window dimensions; note that width and 
     // height will be significantly larger than specified on retina displays.
     glViewport(0, 0, width, height);
+}
+
+/// \brief Handles Camera view functions
+/// \param shaderPrograms vector of all shaders
+/// \param trans transformation matrix
+/// \param projection projection matrix
+void CameraView(std::vector<unsigned> shaderPrograms, glm::mat4 trans, glm::mat4 projection)
+{
+    for (unsigned shaderProgram : shaderPrograms)
+    {
+        glUseProgram(shaderProgram);
+
+        int projectionLoc = glGetUniformLocation(shaderProgram, "projection");
+        glUniformMatrix4fv(projectionLoc, 1, GL_FALSE, glm::value_ptr(projection));
+
+        MainCamera.tick();
+
+        glm::mat4 view;
+        view = glm::lookAt(MainCamera.cameraPos, MainCamera.cameraPos + MainCamera.cameraFront, MainCamera.cameraUp);
+
+        int viewLoc = glGetUniformLocation(shaderProgram, "view");
+        glUniformMatrix4fv(viewLoc, 1, GL_FALSE, glm::value_ptr(view));
+
+        // Pass the transformation matrix to the vertex shader
+        unsigned int transformLoc = glGetUniformLocation(shaderProgram, "transform");
+        glUniformMatrix4fv(transformLoc, 1, GL_FALSE, glm::value_ptr(trans));
+    }
 }
