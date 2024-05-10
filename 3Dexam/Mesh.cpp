@@ -54,12 +54,40 @@ void Mesh::CreateCube(float radius, glm::vec3 color)
 
 void Mesh::CreateTriangle(float radius, glm::vec3 color)
 {
-    
+    // Define triangle vertices
+    vertices = {
+        // Positions           // Normals           // Color
+        { -radius, -radius, 0.0f, glm::vec3(0.0f, 0.0f, -1.0f), color },
+        {  radius, -radius, 0.0f, glm::vec3(0.0f, 0.0f, -1.0f), color },
+        {  0.0f,   radius, 0.0f, glm::vec3(0.0f, 0.0f, -1.0f), color }
+    };
+
+    // Define triangles
+    indices = {
+        0, 1, 2    // front
+    };
+
+    Setup();
 }
 
 void Mesh::CreateSquare(float radius, glm::vec3 color)
 {
-    
+    // Define square vertices
+    vertices = {
+        // Positions           // Normals           // Color
+        { -radius, -radius, 0.0f, glm::vec3(0.0f, 0.0f, -1.0f), color },
+        {  radius, -radius, 0.0f, glm::vec3(0.0f, 0.0f, -1.0f), color },
+        {  radius,  radius, 0.0f, glm::vec3(0.0f, 0.0f, -1.0f), color },
+        { -radius,  radius, 0.0f, glm::vec3(0.0f, 0.0f, -1.0f), color }
+    };
+
+    // Define triangles
+    indices = {
+        0, 1, 2,    // first triangle
+        2, 3, 0     // second triangle
+    };
+
+    Setup();
 }
 
 void Mesh::Setup()

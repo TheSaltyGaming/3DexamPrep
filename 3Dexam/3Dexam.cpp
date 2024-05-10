@@ -35,9 +35,24 @@ float lastX = SCR_WIDTH / 2.0f, lastY = SCR_HEIGHT / 2.0f;
 std::string vfs = ShaderLoader::LoadShaderFromFile("Triangle.vert");
 std::string fs = ShaderLoader::LoadShaderFromFile("Triangle.frag");
 
+/// THINGS TO DO
+/// TODO: Refactor code to seperate functions
+/// TODO: CREATE PYRAMID MESH
+/// TODO: CREATE SPHERE MESH?
+/// TODO: NPC MESH
+/// TODO: TERRAIN
+/// TODO: PLANE
+/// TODO: COLLISION. Just give it all AABB for now.
+/// TODO: MOVEMENT?
+/// TODO: 
+
+
+
 Camera MainCamera;
 
 Mesh testingBox;
+Mesh testingTriangle;
+Mesh testingSquare;
 
 std::vector<unsigned> shaderPrograms;
 
@@ -48,9 +63,12 @@ void DrawObjects(unsigned VAO, Shader ShaderProgram)
     glDrawArrays(GL_TRIANGLES, 0, 3);
 
     testingBox.Draw(ShaderProgram.ID);
+    testingTriangle.Draw(ShaderProgram.ID);
+    testingSquare.Draw(ShaderProgram.ID);
 
     
 }
+
 
 
 void render(GLFWwindow* window, Shader ourShader, unsigned VAO)
@@ -90,6 +108,10 @@ void render(GLFWwindow* window, Shader ourShader, unsigned VAO)
         testingBox.globalPosition.x += deltaTime * 1.1f;
         //slowly rotate testing box
         testingBox.globalRotation.y += deltaTime * 100.1f;
+
+        testingTriangle.globalPosition.x -= deltaTime * 1.1f;
+
+        testingSquare.globalPosition.y += deltaTime * 1.1f;
         
         // input
         // -----
@@ -99,10 +121,6 @@ void render(GLFWwindow* window, Shader ourShader, unsigned VAO)
         // ------
         glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
-        //Temp rotate code
-        
-        //model = glm::rotate(model, deltaTime * glm::radians(50.0f), glm::vec3(0.5f, 1.0f, 0.0f));
         
         // render the triangle
         DrawObjects(VAO, ourShader);
@@ -168,8 +186,13 @@ int main()
          0.0f,  0.5f, 0.0f,  0.0f, 0.0f, 1.0f   // top 
     };
 
+    /// SETUP MESHES HERE
+    /// TODO: Move this to a function
+    ///------------------------------
     testingBox = Mesh(Cube, 1.0f, glm::vec3(0.0f, 0.5f, 0.31f));
-
+    testingTriangle = Mesh(Triangle, 1.0f, glm::vec3(0.0f, 1.0f, 0.31f));
+    testingSquare = Mesh(Square, 1.0f, glm::vec3(0.0f, 0.5f, 0.31f));
+    
     unsigned int VBO, VAO;
     glGenVertexArrays(1, &VAO);
     glGenBuffers(1, &VBO);
