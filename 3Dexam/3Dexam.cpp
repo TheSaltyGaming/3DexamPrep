@@ -44,7 +44,7 @@ std::string fs = ShaderLoader::LoadShaderFromFile("Triangle.frag");
 /// TODO: PLANE
 /// TODO: COLLISION. Just give it all AABB for now.
 /// TODO: MOVEMENT?
-/// TODO: 
+/// TODO: USE SHADERFILELOADER
 
 
 
