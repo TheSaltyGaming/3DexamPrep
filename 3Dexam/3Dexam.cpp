@@ -7,6 +7,7 @@
 #include <glm/gtc/type_ptr.hpp>
 
 #include "Camera.h"
+#include "Mesh.h"
 #include "glm/mat4x3.hpp"
 
 void framebuffer_size_callback(GLFWwindow* window, int width, int height);
@@ -36,6 +37,8 @@ std::string fs = ShaderLoader::LoadShaderFromFile("Triangle.frag");
 
 Camera MainCamera;
 
+Mesh testingBox;
+
 std::vector<unsigned> shaderPrograms;
 
 void DrawObjects(unsigned VAO, Shader ShaderProgram)
@@ -43,6 +46,10 @@ void DrawObjects(unsigned VAO, Shader ShaderProgram)
     ShaderProgram.use();
     glBindVertexArray(VAO);
     glDrawArrays(GL_TRIANGLES, 0, 3);
+
+    testingBox.Draw(ShaderProgram.ID);
+
+    
 }
 
 
@@ -155,6 +162,8 @@ int main()
         -0.5f, -0.5f, 0.0f,  0.0f, 1.0f, 0.0f,  // bottom left
          0.0f,  0.5f, 0.0f,  0.0f, 0.0f, 1.0f   // top 
     };
+
+    testingBox = Mesh(Cube, 1.0f, glm::vec3(0.0f, 0.5f, 0.31f));
 
     unsigned int VBO, VAO;
     glGenVertexArrays(1, &VAO);
