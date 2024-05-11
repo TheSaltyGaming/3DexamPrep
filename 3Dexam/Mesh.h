@@ -4,7 +4,7 @@
 
 #include "Vertex.h"
 
-enum MeshType {Cube, Triangle, Square  };
+enum MeshType {Cube, Triangle, Square, Pyramid, Sphere};
 
 class Mesh
 {
@@ -12,11 +12,14 @@ public:
 
     Mesh();
     Mesh(MeshType type, float radius, glm::vec3 color);
+    Mesh(MeshType type, float radius, int segments, glm::vec3 color);
     
 
     void CreateCube(float radius, glm::vec3 color);
     void CreateTriangle(float radius, glm::vec3 color);
     void CreateSquare(float radius, glm::vec3 color);
+    void CreatePyramid(float radius, glm::vec3 color);
+    void CreateSphere(float radius, int segments, glm::vec3 color);
 
 
     void Setup();

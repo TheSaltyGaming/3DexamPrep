@@ -1,6 +1,7 @@
 #include "Shader.h"
 #include "ShaderFileLoader.h"
 #include <iostream>
+#include <map>
 #include <glm/fwd.hpp>
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
@@ -22,6 +23,23 @@ void DrawObjects(unsigned VAO, Shader ShaderProgram);
 const unsigned int SCR_WIDTH = 1280;
 const unsigned int SCR_HEIGHT = 720;
 
+//TODO: COLORS STRUCT PLEASE
+struct colorStruct
+{
+    glm::vec3 red = glm::vec3(1.0f, 0.0f, 0.0f);
+    glm::vec3 green = glm::vec3(0.0f, 1.0f, 0.0f);
+    glm::vec3 blue = glm::vec3(0.0f, 0.0f, 1.0f);
+    glm::vec3 white = glm::vec3(1.0f, 1.0f, 1.0f);
+    glm::vec3 black = glm::vec3(0.0f, 0.0f, 0.0f);
+    glm::vec3 yellow = glm::vec3(1.0f, 1.0f, 0.0f);
+    glm::vec3 cyan = glm::vec3(0.0f, 1.0f, 1.0f);
+    glm::vec3 magenta = glm::vec3(1.0f, 0.0f, 1.0f);
+    glm::vec3 orange = glm::vec3(1.0f, 0.5f, 0.0f);
+    glm::vec3 purple = glm::vec3(0.5f, 0.0f, 0.5f);
+    glm::vec3 grey = glm::vec3(0.5f, 0.5f, 0.5f);
+};
+
+colorStruct colors;
 ///Delta time variables
 ///--------------------
 float deltaTime = 0.0f;	// Time between current frame and last frame
@@ -53,6 +71,8 @@ Camera MainCamera;
 Mesh testingBox;
 Mesh testingTriangle;
 Mesh testingSquare;
+Mesh testingPyramid;
+Mesh testingSphere;
 
 std::vector<unsigned> shaderPrograms;
 
@@ -65,6 +85,8 @@ void DrawObjects(unsigned VAO, Shader ShaderProgram)
     testingBox.Draw(ShaderProgram.ID);
     testingTriangle.Draw(ShaderProgram.ID);
     testingSquare.Draw(ShaderProgram.ID);
+    testingPyramid.Draw(ShaderProgram.ID);
+    testingSphere.Draw(ShaderProgram.ID);
 
     
 }
@@ -112,6 +134,11 @@ void render(GLFWwindow* window, Shader ourShader, unsigned VAO)
         testingTriangle.globalPosition.x -= deltaTime * 1.1f;
 
         testingSquare.globalPosition.y += deltaTime * 1.1f;
+
+        testingSphere.globalPosition.z += deltaTime * 1.1f;
+        testingSphere.globalRotation.y += deltaTime * 1.1f;
+        
+        
         
         // input
         // -----
@@ -189,9 +216,11 @@ int main()
     /// SETUP MESHES HERE
     /// TODO: Move this to a function
     ///------------------------------
-    testingBox = Mesh(Cube, 1.0f, glm::vec3(0.0f, 0.5f, 0.31f));
-    testingTriangle = Mesh(Triangle, 1.0f, glm::vec3(0.0f, 1.0f, 0.31f));
-    testingSquare = Mesh(Square, 1.0f, glm::vec3(0.0f, 0.5f, 0.31f));
+    testingBox = Mesh(Cube, 1.0f, colors.red );
+    testingTriangle = Mesh(Triangle, 1.0f, colors.green);
+    testingSquare = Mesh(Square, 1.0f, colors.blue);
+    testingPyramid = Mesh(Pyramid, 1.0f, colors.magenta);
+    testingSphere = Mesh(Sphere, 1.0f, 10, colors.orange);
     
     unsigned int VBO, VAO;
     glGenVertexArrays(1, &VAO);
