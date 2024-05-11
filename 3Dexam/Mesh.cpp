@@ -135,6 +135,7 @@ void Mesh::CreatePyramid(float radius, glm::vec3 color)
     };
 
     Setup();
+    CalculateBoundingBox();
 } 
 
 void Mesh::CreateSphere(float radius, int segments, glm::vec3 color)
@@ -163,6 +164,7 @@ void Mesh::CreateSphere(float radius, int segments, glm::vec3 color)
     }
 
     Setup();
+    CalculateBoundingBox();
 }
 
 void Mesh::Setup()
@@ -192,6 +194,16 @@ void Mesh::Setup()
     // Unbind VAO and VBO
     glBindBuffer(GL_ARRAY_BUFFER, 0);
     glBindVertexArray(0);
+}
+
+void Mesh::CalculateBoundingBox()
+{
+    minVert = maxVert = vertices[0].Position;
+    for (const auto& vertex : vertices)
+    {
+        minVert = glm::min(minVert, vertex.Position);
+        maxVert = glm::max(maxVert, vertex.Position);
+    }
 }
 
 void Mesh::Draw(unsigned shaderProgram)
@@ -231,4 +243,24 @@ void Mesh::Draw(unsigned shaderProgram)
 
     glBindBuffer(GL_ARRAY_BUFFER, 0);
     glBindVertexArray(0);
+}
+
+bool Mesh::CheckCollision(Mesh* other)
+{
+    // Calculate the bounding box in world space
+    glm::vec3 worldMinVert = minVert + globalPosition;
+    glm::vec3 worldMaxVert = maxVert + globalPosition;
+
+    // Calculate other mesh bounding box in world space
+    glm::vec3 otherWorldMinVert = other->minVert + other->globalPosition;
+    glm::vec3 otherWorldMaxVert = other->maxVert + other->globalPosition;
+
+    // Check for overlap in x, y and z axes
+    bool overlapX = worldMinVert.x <= otherWorldMaxVert.x && worldMaxVert.x >= otherWorldMinVert.x;
+    bool overlapY = worldMinVert.y <= otherWorldMaxVert.y && worldMaxVert.y >= otherWorldMinVert.y;
+    bool overlapZ = worldMinVert.z <= otherWorldMaxVert.z && worldMaxVert.z >= otherWorldMinVert.z;
+
+    // Collision only if overlap on all axes
+    std::cout << "Collision: " << overlapX << " " << overlapY << " " << overlapZ << std::endl;
+    return overlapX && overlapY && overlapZ;
 }

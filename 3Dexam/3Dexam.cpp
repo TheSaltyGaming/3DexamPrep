@@ -8,6 +8,8 @@
 #include <glm/gtc/type_ptr.hpp>
 
 #include "Camera.h"
+#include "Line.h"
+#include "Math.h"
 #include "Mesh.h"
 #include "glm/mat4x3.hpp"
 
@@ -18,12 +20,13 @@ void CameraView(std::vector<unsigned> shaderPrograms, glm::mat4 trans, glm::mat4
 void mouse_callback(GLFWwindow* window, double xpos, double ypos);
 void DrawObjects(unsigned VAO, Shader ShaderProgram);
 
+Math math;
+
 // settings
 
 const unsigned int SCR_WIDTH = 1280;
 const unsigned int SCR_HEIGHT = 720;
 
-//TODO: COLORS STRUCT PLEASE
 struct colorStruct
 {
     glm::vec3 red = glm::vec3(1.0f, 0.0f, 0.0f);
@@ -55,9 +58,6 @@ std::string fs = ShaderLoader::LoadShaderFromFile("Triangle.frag");
 
 /// THINGS TO DO
 /// TODO: Refactor code to seperate functions
-/// TODO: CREATE PYRAMID MESH
-/// TODO: CREATE SPHERE MESH?
-/// TODO: NPC MESH
 /// TODO: TERRAIN
 /// TODO: PLANE
 /// TODO: COLLISION. Just give it all AABB for now.
@@ -73,6 +73,8 @@ Mesh testingTriangle;
 Mesh testingSquare;
 Mesh testingPyramid;
 Mesh testingSphere;
+Mesh testingPlayerCollision;
+
 
 std::vector<unsigned> shaderPrograms;
 
@@ -87,6 +89,9 @@ void DrawObjects(unsigned VAO, Shader ShaderProgram)
     testingSquare.Draw(ShaderProgram.ID);
     testingPyramid.Draw(ShaderProgram.ID);
     testingSphere.Draw(ShaderProgram.ID);
+    
+
+    
 
     
 }
@@ -110,6 +115,8 @@ void render(GLFWwindow* window, Shader ourShader, unsigned VAO)
     while (!glfwWindowShouldClose(window))
     {
 
+        glLineWidth(12);
+        
         float currentFrame = glfwGetTime();
         deltaTime = currentFrame - lastFrame;
         lastFrame = currentFrame;
@@ -131,12 +138,23 @@ void render(GLFWwindow* window, Shader ourShader, unsigned VAO)
         //slowly rotate testing box
         testingBox.globalRotation.y += deltaTime * 100.1f;
 
-        testingTriangle.globalPosition.x -= deltaTime * 1.1f;
+        testingTriangle.globalPosition.x -= deltaTime * 2.1f;
 
         testingSquare.globalPosition.y += deltaTime * 1.1f;
 
         testingSphere.globalPosition.z += deltaTime * 1.1f;
         testingSphere.globalRotation.y += deltaTime * 1.1f;
+
+        //testingPyramid.globalPosition.x -= deltaTime * 1.1f;
+
+        testingPlayerCollision.globalPosition = MainCamera.cameraPos;
+
+        testingPlayerCollision.CheckCollision(&testingPyramid);
+
+        float speed = 1.0f * deltaTime; // Adjust the speed as necessary
+
+        //math.moveObject(&testingTriangle, &testingBox, speed);
+        
         
         
         
@@ -157,6 +175,17 @@ void render(GLFWwindow* window, Shader ourShader, unsigned VAO)
         glfwSwapBuffers(window);
         glfwPollEvents();
     }
+}
+
+void SetupMeshes()
+{
+    testingBox = Mesh(Cube, 1.0f, colors.red );
+    testingTriangle = Mesh(Triangle, 1.0f, colors.green);
+    testingSquare = Mesh(Square, 1.0f, colors.blue);
+    testingPyramid = Mesh(Pyramid, 1.0f, colors.magenta);
+    testingSphere = Mesh(Sphere, 1.0f, 10, colors.orange);
+
+    testingPlayerCollision = Mesh(Cube, 1.0f, colors.yellow);
 }
 
 int main()
@@ -213,14 +242,9 @@ int main()
          0.0f,  0.5f, 0.0f,  0.0f, 0.0f, 1.0f   // top 
     };
 
-    /// SETUP MESHES HERE
-    /// TODO: Move this to a function
-    ///------------------------------
-    testingBox = Mesh(Cube, 1.0f, colors.red );
-    testingTriangle = Mesh(Triangle, 1.0f, colors.green);
-    testingSquare = Mesh(Square, 1.0f, colors.blue);
-    testingPyramid = Mesh(Pyramid, 1.0f, colors.magenta);
-    testingSphere = Mesh(Sphere, 1.0f, 10, colors.orange);
+    /// SETUP MESHES HER
+    SetupMeshes();
+    
     
     unsigned int VBO, VAO;
     glGenVertexArrays(1, &VAO);

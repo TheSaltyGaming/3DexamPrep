@@ -23,7 +23,11 @@ public:
 
 
     void Setup();
+    void CalculateBoundingBox();
+    
     void Draw(unsigned int shaderProgram);
+
+    bool CheckCollision(Mesh* other);
     
     MeshType mType;
 
@@ -35,4 +39,6 @@ public:
 
     glm::vec3 globalPosition = glm::vec3(0.0f, 0.0f, 0.0f);
     glm::vec3 globalRotation = glm::vec3(0.0f, 0.0f, 0.0f);
+    
+    glm::vec3 minVert, maxVert;
 };
