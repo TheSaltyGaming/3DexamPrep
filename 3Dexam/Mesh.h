@@ -4,7 +4,7 @@
 
 #include "Vertex.h"
 
-enum MeshType {Cube, Triangle, Square, Pyramid, Sphere};
+enum MeshType {Cube, Triangle, Square, Pyramid, Sphere, Plane};
 
 class Mesh
 {
@@ -20,6 +20,7 @@ public:
     void CreateSquare(float radius, glm::vec3 color);
     void CreatePyramid(float radius, glm::vec3 color);
     void CreateSphere(float radius, int segments, glm::vec3 color);
+    void CreatePlane(float radius, glm::vec3 color);
 
 
     void Setup();
@@ -31,6 +32,9 @@ public:
     
     MeshType mType;
 
+    
+    bool pickupable = false;
+
     // glm::mat4 model = glm::mat4(1.0f);
     unsigned int VBO, VAO, EBO;
 
@@ -40,5 +44,6 @@ public:
     glm::vec3 globalPosition = glm::vec3(0.0f, 0.0f, 0.0f);
     glm::vec3 globalRotation = glm::vec3(0.0f, 0.0f, 0.0f);
     
-    glm::vec3 minVert, maxVert;
+    glm::vec3 minVert = glm::vec3(0.0f, 0.0f, 0.0f);;
+    glm::vec3 maxVert = glm::vec3(0.0f, 0.0f, 0.0f);
 };

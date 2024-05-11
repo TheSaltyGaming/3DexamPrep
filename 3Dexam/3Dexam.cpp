@@ -24,8 +24,8 @@ Math math;
 
 // settings
 
-const unsigned int SCR_WIDTH = 1280;
-const unsigned int SCR_HEIGHT = 720;
+ unsigned int SCR_WIDTH = 1280;
+ unsigned int SCR_HEIGHT = 720;
 
 struct colorStruct
 {
@@ -59,10 +59,10 @@ std::string fs = ShaderLoader::LoadShaderFromFile("Triangle.frag");
 /// THINGS TO DO
 /// TODO: Refactor code to seperate functions
 /// TODO: TERRAIN
-/// TODO: PLANE
-/// TODO: COLLISION. Just give it all AABB for now.
+/// TODO: DOOR
 /// TODO: MOVEMENT?
 /// TODO: USE SHADERFILELOADER
+/// TODO: Barycentric Coordinaytes and more math functions
 
 
 
@@ -74,12 +74,14 @@ Mesh testingSquare;
 Mesh testingPyramid;
 Mesh testingSphere;
 Mesh testingPlayerCollision;
+Mesh testingPlane;
 
 
 std::vector<unsigned> shaderPrograms;
 
 void DrawObjects(unsigned VAO, Shader ShaderProgram)
 {
+    //Drawmeshes here, draw meshes (this comment is for CTRL + F search)
     ShaderProgram.use();
     glBindVertexArray(VAO);
     glDrawArrays(GL_TRIANGLES, 0, 3);
@@ -89,10 +91,7 @@ void DrawObjects(unsigned VAO, Shader ShaderProgram)
     testingSquare.Draw(ShaderProgram.ID);
     testingPyramid.Draw(ShaderProgram.ID);
     testingSphere.Draw(ShaderProgram.ID);
-    
-
-    
-
+    testingPlane.Draw(ShaderProgram.ID);
     
 }
 
@@ -104,11 +103,13 @@ void render(GLFWwindow* window, Shader ourShader, unsigned VAO)
     view = glm::translate(view, glm::vec3(0.0f, 0.0f, -3.0f)); 
 
     glm::mat4 projection;
-    projection = glm::perspective(glm::radians(45.0f), 800.0f / 600.0f, 0.1f, 100.0f);
+    projection = glm::perspective(glm::radians(45.0f), (float)SCR_WIDTH / (float)SCR_HEIGHT, 0.1f, 100.0f);
 
     glm::mat4 model = glm::mat4(1.0f);
     model = glm::rotate(model, glm::radians(-55.0f), glm::vec3(1.0f, 0.0f, 0.0f)); 
     
+    
+
     
     // render loop
     // -----------
@@ -179,6 +180,8 @@ void render(GLFWwindow* window, Shader ourShader, unsigned VAO)
 
 void SetupMeshes()
 {
+    //Create meshes here, Make meshes here, Setup meshes here, define meshes here (this comment is for CTRL + F search)
+    
     testingBox = Mesh(Cube, 1.0f, colors.red );
     testingTriangle = Mesh(Triangle, 1.0f, colors.green);
     testingSquare = Mesh(Square, 1.0f, colors.blue);
@@ -186,6 +189,12 @@ void SetupMeshes()
     testingSphere = Mesh(Sphere, 1.0f, 10, colors.orange);
 
     testingPlayerCollision = Mesh(Cube, 1.0f, colors.yellow);
+
+    testingPlane = Mesh(Square, 10.0f, colors.white);
+    
+
+    testingPlane.globalPosition = glm::vec3(0.0f, -1.0f, 0.0f);
+    testingPlane.globalRotation = glm::vec3(90.0f, 0.0f, 0.0f);
 }
 
 int main()
@@ -312,6 +321,18 @@ void processInput(GLFWwindow* window)
         ;
         MainCamera.cameraPos.y += 0.01;
     }
+    
+    if (glfwGetKey(window, GLFW_KEY_TAB) == GLFW_PRESS)
+    {
+        if (glfwGetInputMode(window, GLFW_CURSOR) == GLFW_CURSOR_NORMAL)
+        {
+            glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+        }
+        else
+        {
+            glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
+        }
+    }
 }
 
 void mouse_callback(GLFWwindow* window, double xpos, double ypos)
@@ -352,6 +373,8 @@ void mouse_callback(GLFWwindow* window, double xpos, double ypos)
 // ---------------------------------------------------------------------------------------------
 void framebuffer_size_callback(GLFWwindow* window, int width, int height)
 {
+    SCR_WIDTH = width;
+    SCR_HEIGHT = height;
     // make sure the viewport matches the new window dimensions; note that width and 
     // height will be significantly larger than specified on retina displays.
     glViewport(0, 0, width, height);

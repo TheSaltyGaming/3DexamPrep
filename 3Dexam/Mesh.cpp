@@ -25,6 +25,9 @@ Mesh::Mesh(MeshType type, float radius, glm::vec3 color)
     case Pyramid:
         CreatePyramid(radius, color);
         break;
+    case Plane:
+        CreatePlane(radius, color);
+        break;
     case Sphere:
         std::cout << "Error, please specify number of segments" << std::endl;
         break;
@@ -167,6 +170,26 @@ void Mesh::CreateSphere(float radius, int segments, glm::vec3 color)
     CalculateBoundingBox();
 }
 
+void Mesh::CreatePlane(float radius, glm::vec3 color)
+{
+    // Define plane vertices
+    vertices = {
+        // Positions           // Normals           // Color
+        { -radius, 0.0f, -radius, glm::vec3(0.0f, 1.0f, 0.0f), color },
+        {  radius, 0.0f, -radius, glm::vec3(0.0f, 1.0f, 0.0f), color },
+        {  radius, 0.0f,  radius, glm::vec3(0.0f, 1.0f, 0.0f), color },
+        { -radius, 0.0f,  radius, glm::vec3(0.0f, 1.0f, 0.0f), color }
+    };
+
+    // Define triangles
+    indices = {
+        2, 1, 0,    // first triangle
+        0, 3, 2     // second triangle
+    };
+
+    Setup();
+}
+
 void Mesh::Setup()
 {
     glGenVertexArrays(1, &VAO);
@@ -255,12 +278,16 @@ bool Mesh::CheckCollision(Mesh* other)
     glm::vec3 otherWorldMinVert = other->minVert + other->globalPosition;
     glm::vec3 otherWorldMaxVert = other->maxVert + other->globalPosition;
 
-    // Check for overlap in x, y and z axes
+    // Check overlap
     bool overlapX = worldMinVert.x <= otherWorldMaxVert.x && worldMaxVert.x >= otherWorldMinVert.x;
     bool overlapY = worldMinVert.y <= otherWorldMaxVert.y && worldMaxVert.y >= otherWorldMinVert.y;
     bool overlapZ = worldMinVert.z <= otherWorldMaxVert.z && worldMaxVert.z >= otherWorldMinVert.z;
 
     // Collision only if overlap on all axes
     std::cout << "Collision: " << overlapX << " " << overlapY << " " << overlapZ << std::endl;
+
+
+    // std::cout << "worldMinVert: " << worldMinVert.x << " " << worldMinVert.y << " " << worldMinVert.z << std::endl;
+    // std::cout << "worldMaxVert: " << worldMaxVert.x << " " << worldMaxVert.y << " " << worldMaxVert.z << std::endl;
     return overlapX && overlapY && overlapZ;
 }
