@@ -9,6 +9,8 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
 
+#include "Vertex.h"
+
 
 class Line {
 
@@ -16,20 +18,18 @@ public:
         unsigned VAO, VBO, EBO;
         Line();
 
-        Line(std::vector<glm::vec3> points);
+        Line(std::vector<Vertex> vertices);
 
         void Setup();
 
         void Draw(unsigned int shaderProgram);
 
-        std::vector<glm::vec3> linePoints;;
+        std::vector<Vertex> lineVertices;
+        
 
-        glm::mat4 model = glm::mat4(1.0f);
-
-
-        void SetPosition(glm::vec3 position) {
-                model = glm::translate(glm::mat4(1.0f), position);
-        }
+        glm::vec3 globalPosition = glm::vec3(0.0f, 0.0f, 0.0f);
+        glm::vec3 globalRotation = glm::vec3(0.0f, 0.0f, 0.0f);
+        
 };
 
 

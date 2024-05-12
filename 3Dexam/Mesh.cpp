@@ -55,14 +55,14 @@ void Mesh::CreateCube(float radius, glm::vec3 color)
     // Define cube vertices
     vertices = {
         // Positions           // Normals           // Color
-        { -radius, -radius, -radius, glm::vec3(-1.0f, -1.0f, -1.0f), color },
-        {  radius, -radius, -radius, glm::vec3( 1.0f, -1.0f, -1.0f), color },
-        {  radius,  radius, -radius, glm::vec3( 1.0f,  1.0f, -1.0f), color },
-        { -radius,  radius, -radius, glm::vec3(-1.0f,  1.0f, -1.0f), color },
-        { -radius, -radius,  radius, glm::vec3(-1.0f, -1.0f,  1.0f), color },
-        {  radius, -radius,  radius, glm::vec3( 1.0f, -1.0f,  1.0f), color },
-        {  radius,  radius,  radius, glm::vec3( 1.0f,  1.0f,  1.0f), color },
-        { -radius,  radius,  radius, glm::vec3(-1.0f,  1.0f,  1.0f), color }
+        { glm::vec3(-radius, -radius, -radius), glm::vec3(-1.0f, -1.0f, -1.0f), color },
+        { glm::vec3(radius, -radius, -radius), glm::vec3(1.0f, -1.0f, -1.0f), color },
+        { glm::vec3(radius, radius, -radius), glm::vec3(1.0f, 1.0f, -1.0f), color },
+        { glm::vec3(-radius, radius, -radius), glm::vec3(-1.0f, 1.0f, -1.0f), color },
+        { glm::vec3(-radius, -radius, radius), glm::vec3(-1.0f, -1.0f, 1.0f), color },
+        { glm::vec3(radius, -radius, radius), glm::vec3(1.0f, -1.0f, 1.0f), color },
+        { glm::vec3(radius, radius, radius), glm::vec3(1.0f, 1.0f, 1.0f), color },
+        { glm::vec3(-radius, radius, radius), glm::vec3(-1.0f, 1.0f, 1.0f), color }
     };
 
     // Define triangles
@@ -83,9 +83,9 @@ void Mesh::CreateTriangle(float radius, glm::vec3 color)
     // Define triangle vertices
     vertices = {
         // Positions           // Normals           // Color
-        { -radius, -radius, 0.0f, glm::vec3(0.0f, 0.0f, -1.0f), color },
-        {  radius, -radius, 0.0f, glm::vec3(0.0f, 0.0f, -1.0f), color },
-        {  0.0f,   radius, 0.0f, glm::vec3(0.0f, 0.0f, -1.0f), color }
+        { glm::vec3(-radius, -radius, 0.0f), glm::vec3(0.0f, 0.0f, -1.0f), color },
+        {  glm::vec3(radius, -radius, 0.0f), glm::vec3(0.0f, 0.0f, -1.0f), color },
+        {  glm::vec3(0.0f,   radius, 0.0f), glm::vec3(0.0f, 0.0f, -1.0f), color }
     };
 
     // Define triangles
@@ -101,10 +101,10 @@ void Mesh::CreateSquare(float radius, glm::vec3 color)
     // Define square vertices
     vertices = {
         // Positions           // Normals           // Color
-        { -radius, -radius, 0.0f, glm::vec3(0.0f, 0.0f, -1.0f), color },
-        {  radius, -radius, 0.0f, glm::vec3(0.0f, 0.0f, -1.0f), color },
-        {  radius,  radius, 0.0f, glm::vec3(0.0f, 0.0f, -1.0f), color },
-        { -radius,  radius, 0.0f, glm::vec3(0.0f, 0.0f, -1.0f), color }
+        { glm::vec3(-radius, -radius, 0.0f), glm::vec3(0.0f, 0.0f, -1.0f), color },
+        { glm::vec3(radius, -radius, 0.0f), glm::vec3(0.0f, 0.0f, -1.0f), color },
+        { glm::vec3(radius, radius, 0.0f), glm::vec3(0.0f, 0.0f, -1.0f), color },
+        { glm::vec3(-radius, radius, 0.0f), glm::vec3(0.0f, 0.0f, -1.0f), color }
     };
 
     // Define triangles
@@ -121,11 +121,11 @@ void Mesh::CreatePyramid(float radius, glm::vec3 color)
     // Vertices
     vertices = {
         // Positions           // Normals           // Color
-        { -radius, -radius, -radius, glm::vec3(-1.0f, -1.0f, -1.0f), color }, // 0
-        {  radius, -radius, -radius, glm::vec3( 1.0f, -1.0f, -1.0f), color }, // 1
-        {  radius, -radius,  radius, glm::vec3( 1.0f, -1.0f,  1.0f), color }, // 2
-        { -radius, -radius,  radius, glm::vec3(-1.0f, -1.0f,  1.0f), color }, // 3
-        {  0.0f,   radius,  0.0f,   glm::vec3( 0.0f,  1.0f,  0.0f), color }  // 4
+        { glm::vec3(-radius, -radius, -radius), glm::vec3(-1.0f, -1.0f, -1.0f), color }, // 0
+        { glm::vec3(radius, -radius, -radius), glm::vec3(1.0f, -1.0f, -1.0f), color }, // 1
+        { glm::vec3(radius, -radius,  radius), glm::vec3(1.0f, -1.0f,  1.0f), color }, // 2
+        { glm::vec3(-radius, -radius,  radius), glm::vec3(-1.0f, -1.0f,  1.0f), color }, // 3
+        { glm::vec3(0.0f,   radius,  0.0f),   glm::vec3(0.0f,  1.0f,  0.0f), color }  // 4
     };
 
     // Define triangles
@@ -150,7 +150,7 @@ void Mesh::CreateSphere(float radius, int segments, glm::vec3 color)
             float x = radius * cos(glm::radians(j * 360.0f / segments)) * sin(glm::radians(180.0f - i * 180.0f / segments));
             float z = radius * sin(glm::radians(j * 360.0f / segments)) * sin(glm::radians(180.0f - i * 180.0f / segments));
 
-            vertices.push_back({x,y,z, glm::normalize(glm::vec3(x, y, z)), color});
+            vertices.emplace_back(glm::vec3(x,y,z), glm::normalize(glm::vec3(x, y, z)), color);
         }
     }
 
@@ -175,10 +175,10 @@ void Mesh::CreatePlane(float radius, glm::vec3 color)
     // Define plane vertices
     vertices = {
         // Positions           // Normals           // Color
-        { -radius, 0.0f, -radius, glm::vec3(0.0f, 1.0f, 0.0f), color },
-        {  radius, 0.0f, -radius, glm::vec3(0.0f, 1.0f, 0.0f), color },
-        {  radius, 0.0f,  radius, glm::vec3(0.0f, 1.0f, 0.0f), color },
-        { -radius, 0.0f,  radius, glm::vec3(0.0f, 1.0f, 0.0f), color }
+        { glm::vec3(-radius, 0.0f, -radius), glm::vec3(0.0f, 1.0f, 0.0f), color },
+        {  glm::vec3(radius, 0.0f, -radius), glm::vec3(0.0f, 1.0f, 0.0f), color },
+        {  glm::vec3(radius, 0.0f,  radius), glm::vec3(0.0f, 1.0f, 0.0f), color },
+        { glm::vec3(-radius, 0.0f,  radius), glm::vec3(0.0f, 1.0f, 0.0f), color }
     };
 
     // Define triangles
@@ -246,16 +246,16 @@ void Mesh::Draw(unsigned shaderProgram)
     switch (mType)
     {
     case Cube:
-        glDrawElements(GL_TRIANGLES, 36, GL_UNSIGNED_INT, 0);
+        glDrawElements(GL_TRIANGLES, indices.size(), GL_UNSIGNED_INT, 0);
         break;
     case Square:
-        glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+        glDrawElements(GL_TRIANGLES, indices.size(), GL_UNSIGNED_INT, 0);
         break;
     case Triangle:
-        glDrawElements(GL_TRIANGLES, 3, GL_UNSIGNED_INT, 0);
+        glDrawElements(GL_TRIANGLES, indices.size(), GL_UNSIGNED_INT, 0);
         break;
     case Pyramid:
-        glDrawElements(GL_TRIANGLES, 18, GL_UNSIGNED_INT, 0);
+        glDrawElements(GL_TRIANGLES, indices.size(), GL_UNSIGNED_INT, 0);
         break;
     case Sphere:
         glDrawElements(GL_TRIANGLES, indices.size(), GL_UNSIGNED_INT, 0);
