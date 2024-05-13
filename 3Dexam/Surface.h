@@ -2,6 +2,8 @@
 #include <vector>
 #include <glm/vec3.hpp>
 
+#include "Vertex.h"
+
 struct Vertex;
 
 class Surface
@@ -15,6 +17,8 @@ public:
 
     std::vector<Vertex> vertices;
     std::vector<unsigned int> indices;
+
+    std::vector<TriangleStruct> triangles;
     int size = 10;
 
     unsigned int VBO, VAO, EBO;

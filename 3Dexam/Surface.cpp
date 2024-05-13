@@ -20,7 +20,21 @@ Surface::Surface(int sizeint, glm::vec3 color) {
     for (int i = 0; i <= size; ++i) {
         for (int j = 0; j <= size; ++j) {
             glm::vec3 position((float)i / detail*2, glm::perlin(glm::vec2((float)i / detail, (float)j / detail)), (float)j / detail*2);
-            vertices.push_back(Vertex(position, glm::vec3(0.0f), defaultColor));
+
+            glm::vec3 vertexColor = defaultColor;
+
+            // If the color is (420, 420, 420), use rainbow colors
+            if (color == glm::vec3(420, 420, 420)) {
+                // Calculate color based on the position in the grid
+                float colorFactor = (float)(i * (size + 1) + j) / (size * size);
+                vertexColor = glm::vec3(
+                    glm::sin(colorFactor * 2.0f * glm::pi<float>()) * 0.5f + 0.5f,
+                    glm::sin(colorFactor * 2.0f * glm::pi<float>() + 2.0f * glm::pi<float>() / 3.0f) * 0.5f + 0.5f,
+                    glm::sin(colorFactor * 2.0f * glm::pi<float>() + 4.0f * glm::pi<float>() / 3.0f) * 0.5f + 0.5f
+                );
+            }
+
+            vertices.push_back(Vertex(position, glm::vec3(0.0f), vertexColor));
         }
     }
 
@@ -40,6 +54,9 @@ Surface::Surface(int sizeint, glm::vec3 color) {
             vertices[bottomLeft + 1].Normal += normal1;
             vertices[topLeft + 1].Normal += normal1;
 
+            // Add the triangle to the triangles vector
+            triangles.push_back(TriangleStruct(vertices[bottomLeft].Position, vertices[bottomLeft + 1].Position, vertices[topLeft + 1].Position, normal1));
+
             // Second triangle
             indices.push_back(topLeft+1);
             indices.push_back(topLeft);
@@ -49,6 +66,9 @@ Surface::Surface(int sizeint, glm::vec3 color) {
             vertices[topLeft + 1].Normal += normal2;
             vertices[topLeft].Normal += normal2;
             vertices[bottomLeft].Normal += normal2;
+
+            // Add the triangle to the triangles vector
+            triangles.push_back(TriangleStruct(vertices[topLeft + 1].Position, vertices[topLeft].Position, vertices[bottomLeft].Position, normal2));
         }
     }
 

@@ -41,6 +41,7 @@ struct colorStruct
     glm::vec3 orange = glm::vec3(1.0f, 0.5f, 0.0f);
     glm::vec3 purple = glm::vec3(0.5f, 0.0f, 0.5f);
     glm::vec3 grey = glm::vec3(0.5f, 0.5f, 0.5f);
+    glm::vec3 rainbow = glm::vec3(420.0f, 420.0f, 420.0f);
 };
 
 colorStruct colors;
@@ -100,7 +101,6 @@ void DrawObjects(unsigned VAO, Shader ShaderProgram)
 }
 
 
-
 void render(GLFWwindow* window, Shader ourShader, unsigned VAO)
 {
     glm::mat4 view = glm::mat4(1.0f);
@@ -157,6 +157,8 @@ void render(GLFWwindow* window, Shader ourShader, unsigned VAO)
 
         testingPlayerCollision.CheckCollision(&testingPyramid);
 
+        math.MapPlayerToSurface(&testingSurface, MainCamera, deltaTime);
+
         //Framerate!!!!!!!
         //std::cout << 1/deltaTime << std::endl;
         
@@ -206,7 +208,7 @@ void SetupMeshes()
     testingPlane.globalPosition = glm::vec3(0.0f, -1.0f, 0.0f);
     testingPlane.globalRotation = glm::vec3(90.0f, 0.0f, 0.0f);
 
-    testingSurface = Surface(10, colors.yellow);
+    testingSurface = Surface(10, colors.rainbow);
 }
 
 int main()

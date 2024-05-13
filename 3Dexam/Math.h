@@ -1,5 +1,7 @@
 ﻿#pragma once
+#include "Camera.h"
 #include "Mesh.h"
+#include "Surface.h"
 #include "Vertex.h"
 
 class Math
@@ -19,6 +21,8 @@ public:
     float calculateHeightUsingBarycentric2(const glm::vec3& A, const glm::vec3& B, const glm::vec3& C, const glm::vec3& P);
 
     bool isPointAboveTriangle(const TriangleStruct& triangle, const glm::vec3& point);
+
+    void MapPlayerToSurface(Surface* surface, Camera& MainCamera, float deltaTime);
     
     
 };

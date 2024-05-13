@@ -114,4 +114,32 @@ bool Math::isPointAboveTriangle(const TriangleStruct& triangle, const glm::vec3&
     return false;
 }
 
+void Math::MapPlayerToSurface(Surface* surface, Camera& MainCamera, float deltaTime)
+{
+    // Get the x and z coordinates of the camera's position
+    float x = MainCamera.cameraPos.x;
+    float z = MainCamera.cameraPos.z;
+
+    // Iterate over all the triangles in the surface
+    for (const TriangleStruct& triangle : surface->triangles)
+    {
+        // Check if the camera's position is above the triangle
+        if (isPointAboveTriangle(triangle, glm::vec3(x, MainCamera.cameraPos.y, z)))
+        {
+            // Calculate the barycentric coordinates of the camera's position within the triangle
+            glm::vec3 barycentricCoords = barycentricCoordinates(triangle.v0, triangle.v1, triangle.v2, glm::vec3(x, MainCamera.cameraPos.y, z));
+
+            // Calculate the height at the camera's position by interpolating the heights of the triangle's vertices
+            float height = calculateHeightUsingBarycentric2(triangle.v0, triangle.v1, triangle.v2, glm::vec3(x, MainCamera.cameraPos.y, z));
+
+            float interpolationSpeed = 4.f* deltaTime;
+            MainCamera.cameraPos.y += ((height - MainCamera.cameraPos.y+1.f) * interpolationSpeed);
+
+
+            // Break the loop as we've found the triangle that the camera is above
+            break;
+        }
+    }
+}
+
 
