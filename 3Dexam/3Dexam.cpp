@@ -11,6 +11,7 @@
 #include "Line.h"
 #include "Math.h"
 #include "Mesh.h"
+#include "Surface.h"
 #include "glm/mat4x3.hpp"
 
 void framebuffer_size_callback(GLFWwindow* window, int width, int height);
@@ -62,7 +63,6 @@ std::string fs = ShaderLoader::LoadShaderFromFile("Triangle.frag");
 /// TODO: DOOR
 /// TODO: MOVEMENT?
 /// TODO: USE SHADERFILELOADER
-/// TODO: Barycentric Coordinaytes and more math functions
 /// TODO: GENERATE different points
 
 
@@ -76,6 +76,7 @@ Mesh testingPyramid;
 Mesh testingSphere;
 Mesh testingPlayerCollision;
 Mesh testingPlane;
+Surface testingSurface;
 
 
 std::vector<unsigned> shaderPrograms;
@@ -93,6 +94,8 @@ void DrawObjects(unsigned VAO, Shader ShaderProgram)
     testingPyramid.Draw(ShaderProgram.ID);
     testingSphere.Draw(ShaderProgram.ID);
     testingPlane.Draw(ShaderProgram.ID);
+
+    testingSurface.Draw(ShaderProgram.ID);
     
 }
 
@@ -186,7 +189,8 @@ void render(GLFWwindow* window, Shader ourShader, unsigned VAO)
 
 void SetupMeshes()
 {
-    //Create meshes here, Make meshes here, Setup meshes here, define meshes here (this comment is for CTRL + F search)
+    //Create meshes here, Make meshes here, Setup meshes here, define meshes here, setupObjects setup objects create objects
+    //(this comment is for CTRL + F search)
     
     testingBox = Mesh(Cube, 1.0f, colors.red );
     testingTriangle = Mesh(Triangle, 1.0f, colors.green);
@@ -201,6 +205,8 @@ void SetupMeshes()
 
     testingPlane.globalPosition = glm::vec3(0.0f, -1.0f, 0.0f);
     testingPlane.globalRotation = glm::vec3(90.0f, 0.0f, 0.0f);
+
+    testingSurface = Surface(10, colors.yellow);
 }
 
 int main()

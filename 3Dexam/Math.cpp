@@ -93,3 +93,25 @@ float Math::calculateHeightUsingBarycentric2(const glm::vec3& A, const glm::vec3
     float height = A.y * baryCoords.x + B.y * baryCoords.y + C.y * baryCoords.z;
     return height;
 }
+
+bool Math::isPointAboveTriangle(const TriangleStruct& triangle, const glm::vec3& point)
+{
+    // Calculate barycentric coordinates for the point with respect to the triangle
+    glm::vec3 baryCoords = barycentricCoordinates(triangle.v0, triangle.v1, triangle.v2, point);
+
+    // Check if the point lies within the triangle
+    if (baryCoords.x >= 0 && baryCoords.x <= 1 &&
+        baryCoords.y >= 0 && baryCoords.y <= 1 &&
+        baryCoords.z >= 0 && baryCoords.z <= 1)
+    {
+        // Check if the point is above the triangle
+        if (point.y > triangle.v0.y && point.y > triangle.v1.y && point.y > triangle.v2.y)
+        {
+            return true;
+        }
+    }
+
+    return false;
+}
+
+
